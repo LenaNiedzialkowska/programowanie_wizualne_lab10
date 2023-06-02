@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             listView1 = new ListView();
             buttonPlay = new Button();
@@ -37,6 +38,9 @@
             buttonMinus = new Button();
             buttonPlus = new Button();
             progressBar1 = new ProgressBar();
+            timer1 = new System.Windows.Forms.Timer(components);
+            label1 = new Label();
+            label2 = new Label();
             SuspendLayout();
             // 
             // listView1
@@ -84,11 +88,11 @@
             // 
             labelTime.AutoSize = true;
             labelTime.Font = new Font("Segoe UI", 13F, FontStyle.Bold, GraphicsUnit.Point);
-            labelTime.Location = new Point(418, 109);
+            labelTime.Location = new Point(392, 129);
             labelTime.Name = "labelTime";
-            labelTime.Size = new Size(113, 30);
+            labelTime.Size = new Size(71, 30);
             labelTime.TabIndex = 4;
-            labelTime.Text = "0:00/0:00";
+            labelTime.Text = "00:00";
             // 
             // buttonMinus
             // 
@@ -119,11 +123,38 @@
             progressBar1.Size = new Size(304, 29);
             progressBar1.TabIndex = 7;
             // 
+            // timer1
+            // 
+            timer1.Enabled = true;
+            timer1.Tick += timer1_Tick;
+            // 
+            // label1
+            // 
+            label1.AutoSize = true;
+            label1.Font = new Font("Segoe UI", 13F, FontStyle.Bold, GraphicsUnit.Point);
+            label1.Location = new Point(498, 129);
+            label1.Name = "label1";
+            label1.Size = new Size(71, 30);
+            label1.TabIndex = 8;
+            label1.Text = "00:00";
+            // 
+            // label2
+            // 
+            label2.AutoSize = true;
+            label2.Font = new Font("Segoe UI", 13F, FontStyle.Bold, GraphicsUnit.Point);
+            label2.Location = new Point(469, 129);
+            label2.Name = "label2";
+            label2.Size = new Size(23, 30);
+            label2.TabIndex = 9;
+            label2.Text = "/";
+            // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(800, 450);
+            Controls.Add(label2);
+            Controls.Add(label1);
             Controls.Add(progressBar1);
             Controls.Add(buttonPlus);
             Controls.Add(buttonMinus);
@@ -148,5 +179,8 @@
         private Button buttonMinus;
         private Button buttonPlus;
         private ProgressBar progressBar1;
+        private System.Windows.Forms.Timer timer1;
+        private Label label1;
+        private Label label2;
     }
 }

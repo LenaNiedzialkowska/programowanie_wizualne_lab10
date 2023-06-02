@@ -1,10 +1,21 @@
+using CommunityToolkit.Maui.Views;
 using System.IO;
 using System.Media;
+using System.Timers;
+using WMPLib;
 
 namespace programowanie_wizualne_lab10
 {
     public partial class Form1 : Form
     {
+        WindowsMediaPlayer player;
+        private bool isPaused;
+        private double pausedPosition;
+        string path;
+        int ms = 0;
+        int m = 0;
+        int s = 0;
+
         public Form1()
         {
             InitializeComponent();
@@ -17,8 +28,9 @@ namespace programowanie_wizualne_lab10
         {
             using (OpenFileDialog file = new OpenFileDialog())
             {
-                file.Filter = "Audio (*.cs,*.acc,*wma)|*.cs;*.mp3;*.wma|All Files (*.*)|*.*";
+                file.Filter = "Audio (*.mp3,*wav)|*.mp3;*.wav";
                 DialogResult answer = file.ShowDialog();
+                path = file.FileName;
                 if (answer == DialogResult.OK)
                 {
                     foreach (var item in file.FileNames)
@@ -42,17 +54,70 @@ namespace programowanie_wizualne_lab10
 
         private void buttonPlay_Click(object sender, EventArgs e)
         {
-            
+            timer1.Start();
+            timer1.Interval = 1;
+            timer1.Tick += new EventHandler(OnTimeEvent);
+
+            var vFile = TagLib.File.Create(path);
+            double vDuration = vFile.Properties.Duration.TotalSeconds;
+            label1.Text = TimeSpan.FromSeconds(vDuration).ToString(@"mm\:ss");
+
+            player = new WMPLib.WindowsMediaPlayer();
+
+            player.URL = path;
+            player.controls.play();
+            isPaused = false;
         }
 
         private void buttonPause_Click(object sender, EventArgs e)
         {
-
+            if (player.playState == WMPPlayState.wmppsPlaying)
+            {
+                player.controls.pause();
+                isPaused = true;
+                pausedPosition = player.controls.currentPosition;
+                timer1.Stop();
+            }
+            else if (player.playState == WMPPlayState.wmppsPaused)
+            {
+                timer1.Start();
+                player.controls.play();
+                isPaused = false;
+            }
         }
 
         private void buttonStop_Click(object sender, EventArgs e)
         {
+            timer1.Stop();
+            ms = 0;
+            m = 0;
+            s = 0;
+            label1.Text = "00:00";
+            labelTime.Text = "00:00";
+            player.controls.stop();
+        }
 
+        private void timer1_Tick(object sender, EventArgs e)
+        {
+
+        }
+        void OnTimeEvent(object sender, EventArgs e)
+        {
+            Invoke(new Action(() =>
+            {
+                ms += 1;
+                if (ms == 100)
+                {
+                    ms = 0;
+                    s += 1;
+                }
+                if (s == 60)
+                {
+                    s = 0;
+                    m += 1;
+                }
+                labelTime.Text = String.Format("{0}:{1}", m.ToString().ToString().PadLeft(2, '0'), s.ToString().ToString().PadLeft(2, '0'));
+            }));
         }
     }
 }
