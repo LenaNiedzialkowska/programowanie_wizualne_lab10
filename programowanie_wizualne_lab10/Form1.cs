@@ -36,6 +36,7 @@ namespace programowanie_wizualne_lab10
                 file.Filter = "Audio (*.mp3,*wav)|*.mp3;*.wav";
                 DialogResult answer = file.ShowDialog();
                 path = file.FileName;
+
                 if (answer == DialogResult.OK)
                 {
                     foreach (var item in file.FileNames)
@@ -60,31 +61,36 @@ namespace programowanie_wizualne_lab10
 
         private void buttonPlay_Click(object sender, EventArgs e)
         {
-            if (isPlaying == true)
+            if (listView1.Items.Count > 0)
             {
-                player.controls.stop();
+                if (isPlaying == true)
+                {
+                    player.controls.stop();
+                }
+                isPlaying = true;
+                int ms = 0;
+                int m = 0;
+                int s = 0;
+                if (listView1.SelectedItems.Count > 0)
+                {
+                    indexOfSelectedSong = listView1.Items.IndexOf(listView1.SelectedItems[0]);
+                }
+                timer1.Start();
+                timer1.Interval = 1;
+                timer1.Tick += new EventHandler(OnTimeEvent);
+
+                var vFile = TagLib.File.Create(songs[indexOfSelectedSong]);
+                double vDuration = vFile.Properties.Duration.TotalSeconds;
+                label1.Text = TimeSpan.FromSeconds(vDuration).ToString(@"mm\:ss");
+
+                player = new WMPLib.WindowsMediaPlayer();
+                player.URL = songs[indexOfSelectedSong];
+                player.controls.play();
+                isPaused = false;
+
+                progressBar1.Maximum = (int)vDuration;
             }
-            isPlaying = true;
-            int ms = 0;
-            int m = 0;
-            int s = 0;
-            indexOfSelectedSong = listView1.Items.IndexOf(listView1.SelectedItems[0]);
 
-            timer1.Start();
-            timer1.Interval = 1;
-            timer1.Tick += new EventHandler(OnTimeEvent);
-
-            var vFile = TagLib.File.Create(songs[indexOfSelectedSong]);
-            double vDuration = vFile.Properties.Duration.TotalSeconds;
-            label1.Text = TimeSpan.FromSeconds(vDuration).ToString(@"mm\:ss");
-
-            player = new WMPLib.WindowsMediaPlayer();
-            player.URL = songs[indexOfSelectedSong];
-            player.controls.play();
-            isPaused = false;
-
-            progressBar1.Maximum = (int)vDuration;
-            
         }
 
         private void buttonPause_Click(object sender, EventArgs e)
@@ -122,11 +128,11 @@ namespace programowanie_wizualne_lab10
 
         private void timer1_Tick(object sender, EventArgs e)
         {
-            if(isPlaying == true)
+            if (isPlaying == true)
             {
                 progressBar1.Value = (int)player.controls.currentPosition;
             }
-            
+
         }
         void OnTimeEvent(object sender, EventArgs e)
         {
